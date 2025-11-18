@@ -11,7 +11,7 @@ export default function SignInPage() {
 	useEffect(() => {
 		const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
 			if (session) {
-				router.replace("/chat");
+				router.replace("/subscription");
 			}
 		});
 		return () => {

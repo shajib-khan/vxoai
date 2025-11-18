@@ -8,18 +8,23 @@ import { Button } from './ui/button';
 
 type ChatInputProps = {
   centered?: boolean;
+  onSend?: (message: string, file?: File | null) => Promise<void> | void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ centered = false }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement send logic (API call, etc.)
-    setMessage('');
-    setFile(null);
+    if (!message && !file) return;
+    try {
+      if (onSend) await onSend(message, file);
+    } finally {
+      setMessage('');
+      setFile(null);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
