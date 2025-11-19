@@ -89,7 +89,6 @@ export default function SubscriptionPage() {
         const txt = await res.text();
         console.error('Checkout session creation failed', txt);
         setLoading(false);
-        alert('Failed to start checkout. See console for details.');
         return;
       }
       const json = await res.json();
@@ -97,7 +96,6 @@ export default function SubscriptionPage() {
       if (!url) {
         console.error('No checkout URL returned', json);
         setLoading(false);
-        alert('Failed to start checkout. No redirect URL returned.');
         return;
       }
       // redirect to Stripe Checkout
@@ -105,11 +103,13 @@ export default function SubscriptionPage() {
     } catch (err) {
       console.error('Error creating checkout session', err);
       setLoading(false);
-      alert('Unexpected error creating checkout session.');
     }
   };
 
-  if (loading) return <div className="text-center p-8 w-full h-screen flex items-center justify-center">Checking subscription...</div>;
+  if (loading) return <div className="text-center bg-primary/5 p-8 w-full h-screen flex items-center justify-center">
+    <p className="text-xl">Checking subscription...</p>
+    <div className="ml-4"><LoadingDots /></div>
+    </div>;
 
   if (isSubscribed) {
     router.replace("/chat");
