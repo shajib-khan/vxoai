@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import LoadingDots from '@/components/LoadingDots'
+import { Lock } from "lucide-react";
 
 export default function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
@@ -116,12 +117,15 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md p-6 rounded-2xl shadow-md bg-white text-center">
+    <main className="min-h-screen flex items-center justify-center bg-primary/5">
+      <div className="w-full max-w-lg p-12 rounded-2xl shadow-lg bg-white text-center">
+        <div className="flex items-center justify-center bg-primary/10 w-20 h-20 rounded-full mx-auto mb-4">
+          <Lock className="mx-auto text-primary" size={40} />
+        </div>
         <h1 className="text-2xl font-bold mb-4">Subscription Required</h1>
-        <p className="mb-6">To use the AI assistant, please start a subscription.</p>
+        <p className="mb-6 text-gray-600">To unlock the full power of VXOAI, Please start your subscription.</p>
         <button
-          className="px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700"
+          className=" w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
           onClick={handleStartSubscription}
         >
           Start Subscription
