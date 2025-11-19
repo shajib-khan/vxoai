@@ -106,7 +106,7 @@ export default function SubscriptionPage() {
     }
   };
 
-  if (loading) return <div className="text-center bg-primary/5 p-8 w-full h-screen flex items-center justify-center">
+  if (loading) return <div className="text-center bg-background p-8 w-full h-screen flex items-center justify-center">
     <p className="text-xl">Checking subscription...</p>
     <div className="ml-4"><LoadingDots /></div>
     </div>;
@@ -117,7 +117,7 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-primary/5">
+    <main className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-lg p-12 rounded-2xl shadow-lg bg-white text-center">
         <div className="flex items-center justify-center bg-primary/10 w-20 h-20 rounded-full mx-auto mb-4">
           <LockKeyhole className="mx-auto text-primary" size={40} />
