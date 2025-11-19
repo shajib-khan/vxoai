@@ -60,7 +60,7 @@ export default function ChatPage() {
 
   return (
     <ProtectedRoute>
-      <main className="h-screen overflow-hidden bg-primary/5 relative">
+      <main className="h-screen overflow-hidden bg-background relative">
         <div className="flex justify-between items-center sticky top-0  mx-auto border-b p-3 shadow-sm [box-shadow:inset_2px_3px_20px_2px_#0000001a]">
           <h1 className="text-2xl font-bold">VXOAI Chat</h1>
           <Button
