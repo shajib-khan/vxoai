@@ -1,6 +1,10 @@
 
-const nextConfig = {
-  experimental: { appDir: true },
+const nextConfig: NextConfig = {
   reactStrictMode: true,
-}
-module.exports = nextConfig
+  // optional but helps with that turbopack root warning:
+  turbopack: {
+    root: __dirname,
+  },
+};
+
+export default nextConfig;
