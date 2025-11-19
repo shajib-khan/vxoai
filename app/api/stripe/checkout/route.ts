@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 export async function POST(req: Request) {
   // Prefer user info from request body (client will send userId/email).
   // This avoids relying on server-side cookie/session state which may not be available.
+  
   let body: any = {}
   try {
     body = await req.json();
