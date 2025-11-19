@@ -2,7 +2,7 @@
 "use client"
 import { useRef, useState } from 'react';
 import FileUploadPill from './FileUploadPill';
-import { Upload } from 'lucide-react';
+import { Link, Paperclip, Upload } from 'lucide-react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 
@@ -38,14 +38,17 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const baseClasses = 'flex flex-col gap-2 bg-white p-4 w-full';
+  const baseClasses = 'flex flex-col gap-2 w-full p-6 px-0 bg-[#f5f9fe]';
   const centeredClasses = 'fixed inset-0 flex items-center justify-center';
   const bottomStickyClasses = 'sticky bottom-0';
 
   return (
+    <div 
+      className={`${baseClasses} ${centered ? centeredClasses : bottomStickyClasses}`}
+    >
     <form
       onSubmit={handleSend}
-      className={`${baseClasses} ${centered ? centeredClasses : bottomStickyClasses}`}
+      className='bg-white p-3 rounded-4xl'
     >
       {file && (
         <FileUploadPill fileName={file.name} onRemove={handleRemoveFile} />
@@ -53,7 +56,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
       <div className="flex items-center gap-2">
         <Input
           type="text"
-          className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 border rounded-full border-blue-100  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Type your message..."
           value={message}
           onChange={e => setMessage(e.target.value)}
@@ -66,11 +69,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
         />
         <Button
           type="button"
-          className="px-3 py-2 rounded-full bg-foreground text-white hover:bg-gray-700 cursor-pointer"
+          className="px-3 py-2 rounded-full border bg-white border-blue-100 text-blue-900 hover:bg-primary hover:text-white cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
           aria-label="Attach file"
         >
-          <Upload/>
+          <Paperclip/>
         </Button>
         <Button
           type="submit"
@@ -81,6 +84,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
         </Button>
       </div>
     </form>
+    </div>
   );
 };
 
