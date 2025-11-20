@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { supabase } from '@/lib/supabaseClient';
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!  // service key, server only
+);
+
+
+
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   const sig = req.headers.get('stripe-signature');

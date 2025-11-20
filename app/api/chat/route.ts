@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // 4. Call OpenAI chat completions
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: "gpt-4.1-nano-2025-04-14", 
       messages: conversationMessages,
       max_tokens: 800,
     })
