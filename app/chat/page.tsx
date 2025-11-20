@@ -32,23 +32,54 @@ export default function ChatPage() {
   };
 
   const onSend = async (text: string) => {
-    // append user message immediately
+    if (!text.trim()) return;
+
     setMessages((prev) => [...prev, { role: "user", text }]);
     setLoading(true);
 
     try {
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error("No user in onSend:", userError);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            text: "Session expired. Please sign in again.",
+          },
+        ]);
+        setLoading(false);
+        router.replace("/signin");
+        return;
+      }
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.id, message: text }),
+        body: JSON.stringify({ userId: user.id, message: text }),
       });
+
+      if (!res.ok) {
+        console.error("Chat API error:", await res.text());
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            text: "Sorry, something went wrong talking to the agent.",
+          },
+        ]);
+        return;
+      }
+
       const data = await res.json();
       const assistant = data.assistant || "Sorry, something went wrong.";
       setMessages((prev) => [...prev, { role: "assistant", text: assistant }]);
     } catch (err) {
+      console.error("Chat send error:", err);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", text: "Error: failed to get response." },
@@ -89,9 +120,8 @@ export default function ChatPage() {
                   )}
                 </div>
               </div>
-
             </div>
-              <ChatInput centered={isEmpty} onSend={onSend} />
+            <ChatInput centered={isEmpty} onSend={onSend} />
           </div>
         </div>
       </main>
