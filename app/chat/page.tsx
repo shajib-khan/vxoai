@@ -13,19 +13,26 @@ import { useEffect, useRef, useState } from "react";
 export default function ChatPage() {
   const router = useRouter();
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
-
   const [messages, setMessages] = useState<
     Array<{ role: "user" | "assistant"; text: string }>
   >([]);
-
+  const [loadingMessages, setLoadingMessages] = useState(true); // <-- new
   const [loading, setLoading] = useState(false);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-const scrollRef = useRef<HTMLDivElement>(null);
+    // Scroll to bottom whenever messages change
+  useEffect(() => {
+  if (scrollRef.current) {
+    scrollRef.current.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth", 
+    });
+  }
+}, [messages]);
 
 
- //load or create massages
+  // Load or create messages
   useEffect(() => {
     const init = async () => {
       const {
@@ -86,12 +93,13 @@ const scrollRef = useRef<HTMLDivElement>(null);
           { role: "assistant", text: "Hello! How can I assist you today?" },
         ]);
       }
+
+      setLoadingMessages(false); // <-- finished loading
     };
 
     init();
   }, []);
 
- 
   const onSend = async (text: string) => {
     if (!conversationId) return;
     if (!text.trim()) return;
@@ -148,6 +156,17 @@ const scrollRef = useRef<HTMLDivElement>(null);
     router.push("/signin");
   };
 
+  if (loadingMessages) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-background">
+        <div className="text-center">
+          <LoadingDots />
+          <p className="mt-4 text-gray-600">Loading your chat...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <main className="h-screen overflow-hidden bg-background relative">
@@ -155,18 +174,20 @@ const scrollRef = useRef<HTMLDivElement>(null);
           <h1 className="text-2xl font-bold">VXOAI Chat</h1>
           <Button
             onClick={handleLogout}
-            className="flex items-center gap-2 bg-white border border-red-600 hover:bg-red-100 text-red-700 px-3 py-2 rounded-full"
+            className="flex items-center gap-2 bg-transparent border border-red-600 hover:bg-red-100 text-red-700 px-3 py-2 rounded-full"
           >
             Logout <LogOut />
           </Button>
         </div>
 
-        <div className="pt-6 h-[calc(100vh-65px)] overflow-auto">
+        <div className="pt-6 h-[calc(100vh-65px)] overflow-y-auto"  ref={scrollRef}>
           <div className="w-full max-w-3xl mx-auto flex flex-col justify-between" >
-            <div ref={scrollRef} className="space-y-4 bg-white mb-2 rounded-2xl chat-expand shadow-md mx-0.5 transition-all duration-200 ease-in-out
- overflow-hidden">
-              <div className="p-6">
-                <div id="messages" className="space-y-3">
+            <div
+              
+              className="space-y-4 bg-white mb-2 border border-[#eeeeee] rounded-2xl chat-expand shadow-[0px_1px_9px_#dbdbdb54] mx-0.5 transition-all duration-200 ease-in-out overflow-hidden"
+            >
+              <div className="p-6" >
+                <div id="messages" className="space-y-6" >
                   {messages.map((m, i) => (
                     <ChatBubble key={i} role={m.role} text={m.text} />
                   ))}

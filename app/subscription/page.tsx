@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import LoadingDots from "@/components/LoadingDots";
 import { LockKeyhole } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
@@ -181,12 +182,12 @@ export default function SubscriptionPage() {
         <p className="mb-6 text-gray-600">
           To unlock the full power of VXOAI, please start your subscription.
         </p>
-        <button
-          className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+        <Button
+          className="w-full p-7 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-blue-700"
           onClick={handleStartSubscription}
         >
           Start Subscription
-        </button>
+        </Button>
       </div>
     </main>
   );

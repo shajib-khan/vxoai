@@ -1,10 +1,10 @@
 
 "use client"
+import { Paperclip, Send } from 'lucide-react';
 import { useRef, useState } from 'react';
 import FileUploadPill from './FileUploadPill';
-import { Link, Paperclip, Upload } from 'lucide-react';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 type ChatInputProps = {
   centered?: boolean;
@@ -38,7 +38,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const baseClasses = 'flex flex-col gap-2 w-full p-6 px-0 bg-[#f5f9fe]';
+  const baseClasses = 'flex flex-col gap-2 w-full p-6 pt-4 px-0 bg-[#f9fafb]';
   const centeredClasses = 'fixed inset-0 flex items-center justify-center';
   const bottomStickyClasses = 'sticky bottom-0';
 
@@ -48,7 +48,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
     >
     <form
       onSubmit={handleSend}
-      className='bg-white p-3 rounded-4xl'
+      className='bg-white p-3 rounded-4xl shadow-[0px_1px_10px_#e0e0e069] border border-[#eeeeee]'
     >
       {file && (
         <FileUploadPill fileName={file.name} onRemove={handleRemoveFile} />
@@ -81,6 +81,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ centered = false, onSend }) => {
           disabled={!message && !file}
         >
           Send
+          <Send />
         </Button>
       </div>
     </form>
