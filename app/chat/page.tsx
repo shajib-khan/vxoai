@@ -16,7 +16,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<
     Array<{ role: "user" | "assistant"; text: string }>
   >([]);
-  const [loadingMessages, setLoadingMessages] = useState(true); // <-- new
+  const [loadingMessages, setLoadingMessages] = useState(true); 
   const [loading, setLoading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -24,12 +24,14 @@ export default function ChatPage() {
     // Scroll to bottom whenever messages change
   useEffect(() => {
   if (scrollRef.current) {
-    scrollRef.current.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: "smooth", 
-    });
+    setTimeout(() => {
+      scrollRef.current!.scrollTo({
+        top: scrollRef.current!.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 0);
   }
-}, [messages]);
+}, [messages,loading]);
 
 
   // Load or create messages
