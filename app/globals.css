@@ -136,3 +136,28 @@ html, body, #__next {
 } 
 }
 
+.chat-expand {
+  animation: chatExpand 0.35s ease forwards;
+}
+
+@keyframes chatExpand {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.bubble-left {
+  animation: slideLeft 0.35s ease forwards;
+}
+
+.bubble-right {
+  animation: slideRight 0.35s ease forwards;
+}
+
+@keyframes slideLeft {
+  0% { opacity: 0; transform: translateX(-12px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideRight {
+  0% { opacity: 0; transform: translateX(12px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
