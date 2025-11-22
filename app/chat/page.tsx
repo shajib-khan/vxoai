@@ -16,25 +16,24 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<
     Array<{ role: "user" | "assistant"; text: string }>
   >([]);
-  const [loadingMessages, setLoadingMessages] = useState(true); 
+  const [loadingMessages, setLoadingMessages] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Scroll to bottom whenever messages change
+  // Auto scroll to bottom
   useEffect(() => {
-  if (scrollRef.current) {
-    setTimeout(() => {
-      scrollRef.current!.scrollTo({
-        top: scrollRef.current!.scrollHeight,
-        behavior: "smooth",
-      });
-    }, 0);
-  }
-}, [messages,loading]);
+    if (scrollRef.current) {
+      setTimeout(() => {
+        scrollRef.current!.scrollTo({
+          top: scrollRef.current!.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 0);
+    }
+  }, [messages, loading]);
 
-
-  // Load or create messages
+  // Load user + conversation + messages
   useEffect(() => {
     const init = async () => {
       const {
@@ -47,7 +46,7 @@ export default function ChatPage() {
         return;
       }
 
-      // 1) check if conversation exists
+      // 1. Find latest conversation
       const { data: conv } = await supabase
         .from("conversations")
         .select("*")
@@ -58,7 +57,7 @@ export default function ChatPage() {
 
       let convId = conv?.id;
 
-      // 2) create if not found
+      // 2. Create conversation if none exists
       if (!convId) {
         const { data: newConv, error: newErr } = await supabase
           .from("conversations")
@@ -80,7 +79,7 @@ export default function ChatPage() {
 
       setConversationId(convId);
 
-      // 3) load messages
+      // 3. Load messages for this conversation
       const { data: msgs } = await supabase
         .from("messages")
         .select("*")
@@ -90,18 +89,18 @@ export default function ChatPage() {
       if (msgs?.length) {
         setMessages(msgs.map((m) => ({ role: m.role, text: m.content })));
       } else {
-        // first-time message
         setMessages([
           { role: "assistant", text: "Hello! How can I assist you today?" },
         ]);
       }
 
-      setLoadingMessages(false); // <-- finished loading
+      setLoadingMessages(false);
     };
 
     init();
   }, []);
 
+  // SEND MESSAGE
   const onSend = async (text: string) => {
     if (!conversationId) return;
     if (!text.trim()) return;
@@ -115,10 +114,10 @@ export default function ChatPage() {
       return;
     }
 
-    // Add user message to UI
+    // Show user message instantly
     setMessages((p) => [...p, { role: "user", text }]);
 
-    // Store user message in DB
+    // Save user message to DB
     await supabase.from("messages").insert({
       conversation_id: conversationId,
       role: "user",
@@ -127,13 +126,12 @@ export default function ChatPage() {
 
     setLoading(true);
 
-    // Call your chat API
+    // SECURE API — no userId sent now
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: user.id,
-        message: text,
+        message: text, // ONLY send message
       }),
     });
 
@@ -143,7 +141,7 @@ export default function ChatPage() {
     // Show assistant reply
     setMessages((p) => [...p, { role: "assistant", text: assistant }]);
 
-    // Save assistant reply in DB
+    // Save assistant reply to DB
     await supabase.from("messages").insert({
       conversation_id: conversationId,
       role: "assistant",
@@ -182,14 +180,13 @@ export default function ChatPage() {
           </Button>
         </div>
 
-        <div className="pt-6 h-[calc(100vh-65px)] overflow-y-auto"  ref={scrollRef}>
-          <div className="w-full max-w-3xl mx-auto flex flex-col justify-between" >
+        <div className="pt-6 h-[calc(100vh-65px)] overflow-y-auto" ref={scrollRef}>
+          <div className="w-full max-w-3xl mx-auto flex flex-col justify-between">
             <div
-              
               className="space-y-4 bg-white mb-2 border border-[#eeeeee] rounded-2xl chat-expand shadow-[0px_1px_9px_#dbdbdb54] mx-0.5 transition-all duration-200 ease-in-out overflow-hidden"
             >
-              <div className="p-6" >
-                <div id="messages" className="space-y-6" >
+              <div className="p-6">
+                <div id="messages" className="space-y-6">
                   {messages.map((m, i) => (
                     <ChatBubble key={i} role={m.role} text={m.text} />
                   ))}

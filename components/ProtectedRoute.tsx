@@ -1,27 +1,52 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '../lib/supabaseClient'
-import LoadingDots from './LoadingDots'
+"use client";
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
+import { useEffect, useState, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import LoadingDots from "./LoadingDots";
+
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const check = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) {
-        router.push('/signin')
-        return
-      }
-      // Optional: fetch subscription row from `user_id` metadata
-      // if not active, push to /subscribe
-      setLoading(false)
-    }
-    check()
-  }, [router])
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-  if (loading) return <div className="p-8 h-screen w-full flex items-center justify-center gap-2"><LoadingDots/> Loading...</div>
-  return <>{children}</>
+      if (!session) {
+        router.replace("/signin");
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+
+    // Optional: listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.replace("/signin");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-background">
+        <LoadingDots />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }
